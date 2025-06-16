@@ -9,12 +9,15 @@ contract Exchange {
     uint256 public feePercent;
     uint256 public orderCount;
 
-    //Mappings
+    // Mappings
     mapping(uint256 => Order) public orders;
 
     // Total tokens belonging to a user
     mapping(address => mapping(address => uint256))
         private userTotalTokenBalance;
+    // Total tokens on an active order
+    mapping(address => mapping(address => uint256))
+        private userActiveTokenBalance;
 
     // Events
     event TokensDeposited(
@@ -29,14 +32,23 @@ contract Exchange {
         uint256 amount,
         uint256 balance
     );
+    event OrderCreated(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        uint256 timestamp
+    );
 
     struct Order {
-        // Attributes of on order
-        uint256 id; //Unique identifier for order
+        // Attributes of an order
+        uint256 id; // Unique identifier for order
         address user; // User who made order
         address tokenGet; // Address of the token they receive
         uint256 amountGet; // Amount they receive
-        address tokenGive; // Address of the token they give
+        address tokenGive; // Address of token they give
         uint256 amountGive; // Amount they give
         uint256 timestamp; // When order was created
     }
@@ -101,6 +113,16 @@ contract Exchange {
         return userTotalTokenBalance[_token][_user];
     }
 
+    function activeBalanceOf(
+        address _token,
+        address _user
+    ) public view returns (uint256) {
+        return userActiveTokenBalance[_token][_user];
+    }
+
+    // ------------------------
+    // MAKE & CANCEL ORDERS
+
     function makeOrder(
         address _tokenGet,
         uint256 _amountGet,
@@ -108,14 +130,15 @@ contract Exchange {
         uint256 _amountGive
     ) public {
         require(
-            totalBalanceOf(_tokenGive, msg.sender) >= _amountGive,
+            totalBalanceOf(_tokenGive, msg.sender) >=
+                activeBalanceOf(_tokenGive, msg.sender) + _amountGive,
             "Exchange: Insufficient balance"
         );
 
-        //Update order count
+        // Update order count
         orderCount++;
 
-        //Instantiate a new order
+        // Instantiate a new order
         orders[orderCount] = Order(
             orderCount,
             msg.sender,
@@ -126,14 +149,10 @@ contract Exchange {
             block.timestamp
         );
 
-        //Update the user's active balance
-        require(
-            userTotalTokenBalance[_tokenGive][msg.sender] >=
-                activeBalanceOf(_tokenGive, msg.sender) + _amountGive,
-            "Exchange: Insufficient balance"
-        );
+        // Update the user's active balance
+        userActiveTokenBalance[_tokenGive][msg.sender] += _amountGive;
 
-        //Emit event
+        // Emit event
         emit OrderCreated(
             orderCount,
             msg.sender,
