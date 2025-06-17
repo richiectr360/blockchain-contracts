@@ -2,6 +2,7 @@
 pragma solidity 0.8.28;
 
 import {Token} from "./Token.sol";
+import {FlashLoanProvider} from "./FlashLoanProvider.sol";
 
 contract Exchange {
     // State variables
