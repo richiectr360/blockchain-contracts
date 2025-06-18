@@ -1,6 +1,37 @@
 # Decentralized Exchange with Flash Loans
 
-This project implements a decentralized exchange (DEX) with flash loan capabilities using Hardhat and Solidity. The backend includes smart contracts for token management, exchange functionality, and flash loans.
+## Problem Statement
+
+Traditional centralized exchanges face several challenges:
+- Lack of transparency in order execution
+- Custody risks of user funds
+- Limited access to advanced trading features
+- High barriers to entry for new tokens
+
+This project solves these problems by implementing:
+- A fully decentralized exchange where users maintain control of their funds
+- Transparent order book management on-chain
+- Flash loan capabilities for advanced trading strategies
+- Permissionless token listing system
+
+## Tech Stack
+
+### Smart Contract Development
+- **Solidity**: Smart contract programming language
+- **Hardhat**: Development environment and testing framework
+- **Hardhat Ignition**: Deployment management system
+- **Ethers.js**: Ethereum web library
+- **OpenZeppelin**: Smart contract security standards and implementations
+
+### Testing & Quality Assurance
+- **Chai**: Assertion library for testing
+- **Mocha**: Testing framework
+- **Hardhat Network**: Local blockchain for development
+
+### Backend Infrastructure
+- **EVM Compatible**: Works with any EVM-based blockchain
+- **Event System**: Real-time updates for frontend integration
+- **Gas Optimization**: Efficient contract design for lower transaction costs
 
 ## Smart Contracts
 
